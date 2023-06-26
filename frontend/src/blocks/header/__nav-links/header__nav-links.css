@@ -1,0 +1,19 @@
+.header__nav-links {
+    display: flex;
+    flex-direction: row;
+    transition: height 0.5s;
+}
+@media (max-width: 696px) {
+    .header__nav-links {
+        margin: auto;
+        width: 100%;
+        height: 0;
+        overflow-y: hidden;
+        background-color: #000;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .header__nav-links_open {
+        height: 142px;
+    }
+}

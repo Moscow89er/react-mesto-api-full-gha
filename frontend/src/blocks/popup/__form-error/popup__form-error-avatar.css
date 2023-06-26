@@ -1,0 +1,31 @@
+.popup__form-error-avatar {
+    display: inline;
+    width: 356px;
+    margin: 0;
+    padding-top: 5px;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    border: none;
+    color: #FF0000;
+    background-color: transparent;
+    outline: none;
+    position: absolute;
+        top: 136px;
+    z-index: 2;
+}
+.popup__form-error-avatar_active {
+    display: inline;
+}
+@media (max-width: 696px) {
+    .popup__form-error-avatar {
+        font-size: 9px;
+        line-height: 12px;
+        width: 240px;
+        top: 126px;
+        margin-left: 20px;
+    }
+    .popup__form-error:first-of-type {
+        top: 100px;
+    }
+}

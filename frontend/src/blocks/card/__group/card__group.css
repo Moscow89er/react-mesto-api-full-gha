@@ -1,0 +1,12 @@
+.card__group {
+    margin: 0;
+    min-width: 282px;
+    height: 78px;
+    background: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}

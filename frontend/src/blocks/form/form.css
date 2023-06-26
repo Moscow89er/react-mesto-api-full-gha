@@ -1,0 +1,7 @@
+.form {
+    margin: auto;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}

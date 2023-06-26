@@ -1,0 +1,7 @@
+.card__like-group {
+    margin: auto 22px;
+    max-width: 24px;
+    min-height: 36px;
+    display: flex;
+    flex-direction: column;
+}

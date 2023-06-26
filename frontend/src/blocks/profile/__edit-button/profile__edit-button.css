@@ -1,0 +1,29 @@
+.profile__edit-button {
+    margin: auto auto 0 auto;
+    width: 24px;
+    min-height: 24px;
+    background: #000;
+    border: 1px solid #FFF;
+    grid-row: 1/2;
+    background-image: url(../../../images/profile_pencil.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.profile__edit-button:hover {
+    opacity: 0.6;
+    transition: 1s linear 0.05s;
+    cursor: pointer;
+}
+@media (max-width: 696px) {
+    .profile__edit-button {
+        margin: auto auto -3px 5px;
+        grid-column: 3/4;
+        grid-row: 2/3;
+        width: 18px;
+        min-height: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url(../../../images/profile_pencil_mobile.svg);
+    }
+}

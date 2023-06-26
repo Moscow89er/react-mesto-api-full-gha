@@ -1,0 +1,55 @@
+.popup__save-button {
+    width: 358px;
+    height: 50px;
+    margin: 20px auto 0;
+    background: #000;
+    color: #fff;
+    border-radius: 2px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    border: none;
+}
+.popup__save-button_disabled {
+    width: 358px;
+    height: 50px;
+    margin: 20px auto 0;
+    background: #000;
+    color: #fff;
+    border-radius: 2px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.2);
+    background: transparent;
+    cursor: pointer;
+}
+.popup__save-button:hover {
+    transition: 1s linear 0.05s;
+    background: rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+}
+
+@media (max-width: 696px) {
+    .popup__save-button {
+        margin: 14px 22px 0;
+        width: 238px;
+        height: 46px;
+        font-size: 14px;
+        line-height: 17px;
+    }
+}
+
+@media (max-width: 696px) {
+    .popup__save-button_disabled {
+        margin: 14px 22px 0;
+        width: 238px;
+        height: 46px;
+        font-size: 14px;
+        line-height: 17px;
+    }
+}

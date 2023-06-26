@@ -1,0 +1,8 @@
+.popup__container-picture {
+    margin: auto;
+    max-width: 816px;
+    max-height: 540px;
+    color: #000;
+    padding: 0;
+    position: sticky;
+}

@@ -1,0 +1,17 @@
+.profile {
+    margin: 2px auto auto;
+    padding-top: 36px;
+    max-width: 880px;
+    min-height: 120px;
+    display: grid;
+    grid-template-columns: 148px 314px 24px 1fr 150px;
+    grid-template-rows: repeat(2, 1fr);
+}
+@media (max-width: 696px) {
+    .profile {
+        margin: 4px auto auto;
+        max-width: 282px;
+        grid-template-columns: 200px 1fr 42px;
+        grid-template-rows: 122px 48px 42px 75px;
+    }
+}

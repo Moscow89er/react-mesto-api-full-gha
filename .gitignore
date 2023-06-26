@@ -1,15 +1,13 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 
 # testing
-/coverage
+coverage/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -22,9 +20,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# ignore folders
-../calorie-zen/
-../mesto-react/
-../mesto/
-../to-do-list/
-../weather-app/
+# Logs
+logs
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.DS_Store
+.idea
+.vscode

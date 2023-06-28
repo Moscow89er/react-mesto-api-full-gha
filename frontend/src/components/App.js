@@ -60,6 +60,7 @@ function App() {
     return () => {
       window.removeEventListener('click', handleOutsidePopupClick);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedIn]);
 
   function signOut() {

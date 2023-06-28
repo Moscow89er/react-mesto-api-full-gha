@@ -11,6 +11,6 @@
 
 IP-адрес 158.160.54.226
 
-Frontend https://...
+Frontend https://mesto.moscow89er.frontend.nomoreparties.sbs
 
 Backend https://...

@@ -6,6 +6,7 @@ const {
 } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/cors');
 
 const PAGE_NOT_FOUND_ERROR_CODE = 404;
 const INTERNAL_SERVER_ERROR_CODE = 500;
@@ -21,6 +22,9 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useNewUrlParser: true,
 });
+
+// использование кросс-доменных запросов CORS
+app.use(cors);
 
 // подключаем логгер запросов
 app.use(requestLogger);

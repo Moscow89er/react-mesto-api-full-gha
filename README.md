@@ -5,12 +5,12 @@
   
 Пожалуйста, прикрепите в это описание ссылку на сайт, размещенный на Яндекс.Облаке.
 
-Адрес репозитория: https://github.com/...
+Адрес репозитория: https://moscow89er.github.io/react-mesto-api-full-gha/
 
 ## Ссылки на проект
 
-IP-адрес 158.160.54.226
+IP 158.160.54.226
 
 Frontend https://mesto.moscow89er.frontend.nomoreparties.sbs
 
-Backend https://...
+Backend https://mesto.moscow89er.frontend.nomoreparties.sbs

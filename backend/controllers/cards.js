@@ -47,7 +47,7 @@ const deleteCard = async (req, res, next) => {
       // если пользователь не является владельцем текущей карточки
       next(new ForbiddenError('Недостаточно прав для удаления'));
     } else {
-      await Card.findByIdAndRemove(cardId);
+      await Card.deleteOne({ _id: cardId });
       res.status(OK_CODE).send(card);
     }
   } catch (err) {

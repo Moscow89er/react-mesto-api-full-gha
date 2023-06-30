@@ -49,11 +49,7 @@ const getCurrentUser = async (req, res, next) => {
       res.status(OK_CODE).send(user);
     }
   } catch (err) {
-    if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Переданы некорректные данные'));
-    } else {
-      next(err);
-    }
+    next(err);
   }
 };
 
@@ -68,10 +64,6 @@ const createUser = async (req, res, next) => {
   } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new ConflictError('Пользователь с этим email уже существует');
-    }
     const hashedPassword = await bcrypt.hash(password, 8);
 
     const user = await User.create({
@@ -89,6 +81,8 @@ const createUser = async (req, res, next) => {
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Переданы некорректные данные'));
+    } else if (err.code === 11000) {
+      next(new ConflictError('Пользователь с этим email уже сущетсвует'));
     } else {
       next(err);
     }
@@ -129,7 +123,7 @@ const editUser = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-        upsert: true,
+        upsert: false,
       },
     );
     res.status(OK_CODE).send(user);
@@ -153,7 +147,7 @@ const editUserAvatar = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-        upsert: true,
+        upsert: false,
       },
     );
     res.status(OK_CODE).send(user);

@@ -7,8 +7,8 @@ const {
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
+const PageNotFoundError = require('./errors/page-not-found-err');
 
-const PAGE_NOT_FOUND_ERROR_CODE = 404;
 const INTERNAL_SERVER_ERROR_CODE = 500;
 const urlRegExp = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
 
@@ -62,8 +62,8 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 // роут если страница не существует
-app.use('*', (req, res) => {
-  res.status(PAGE_NOT_FOUND_ERROR_CODE).send({ message: 'Страница не найдена' });
+app.use('*', (req, res, next) => {
+  next(new PageNotFoundError('Страница не найдена'));
 });
 
 // обработчик логгер ошибок

@@ -12,7 +12,7 @@ const PAGE_NOT_FOUND_ERROR_CODE = 404;
 const INTERNAL_SERVER_ERROR_CODE = 500;
 const urlRegExp = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000 } = require('./config/config');
 
 const app = express();
 
@@ -28,6 +28,13 @@ app.use(cors);
 
 // подключаем логгер запросов
 app.use(requestLogger);
+
+// краш тест (к последующему удалению)
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 // роуты не требующие авторизации
 app.post('/signin', celebrate({

@@ -9,7 +9,6 @@ const { NODE_ENV, JWT_SECRET } = require('../config/config');
 
 const OK_CODE = 200;
 const CREATED_CODE = 201;
-const ONE_WEEK_IN_MS = 1000 * 60 * 60 * 24 * 7;
 
 // Получить всех пользователей
 const getUsers = async (req, res, next) => {
@@ -100,13 +99,7 @@ const login = async (req, res, next) => {
       NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
       { expiresIn: '7d' },
     );
-    // запишем токен в куки
-    res.cookie('jwt', token, {
-      maxAge: ONE_WEEK_IN_MS,
-      httpOnly: true,
-      sameSite: 'None',
-      secure: true,
-    }).send({ token, userId: user._id });
+    res.send({ token, userId: user._id });
   } catch (err) {
     next(err);
   }

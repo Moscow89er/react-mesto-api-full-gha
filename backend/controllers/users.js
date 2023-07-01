@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -10,6 +11,41 @@ const { NODE_ENV, JWT_SECRET } = require('../config/config');
 const OK_CODE = 200;
 const CREATED_CODE = 201;
 
+// Функция для поиска пользователя и обработки ошибок
+const findUserById = async (id, next) => {
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new NotFoundError('Запрашиваемый пользоветель не найден');
+    }
+    return user;
+  } catch (err) {
+    if (err instanceof mongoose.Error.CastError) {
+      next(new BadRequestError('Переданы некорректные данные'));
+    } else {
+      next(err);
+    }
+  }
+};
+
+// Декоратор для поиска пользователя по ID
+const findUserByIdDecorator = (controller) => async (req, res, next) => {
+  const user = await findUserById(req.params.userId, next);
+  if (user) {
+    req.user = user;
+    await controller(req, res, next);
+  }
+};
+
+// Декоратор для поиска авторизованного пользователя
+const findAuthorizedUserDecorator = (controller) => async (req, res, next) => {
+  const user = await findUserById(req.user._id, next);
+  if (user) {
+    req.user = user;
+    await controller(req, res, next);
+  }
+};
+
 // Получить всех пользователей
 const getUsers = async (req, res, next) => {
   try {
@@ -21,35 +57,13 @@ const getUsers = async (req, res, next) => {
 };
 
 // Получить пользователя по id
-const getUser = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      throw new NotFoundError('Запрашиваемый пользоветель не найден');
-    } else {
-      res.status(OK_CODE).send(user);
-    }
-  } catch (err) {
-    if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Переданы некорректные данные'));
-    } else {
-      next(err);
-    }
-  }
+const getUser = (req, res) => {
+  res.status(OK_CODE).send(req.user);
 };
 
 // Получить информацию о текущем пользователе
-const getCurrentUser = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      throw new NotFoundError('Текущий пользоветель не найден');
-    } else {
-      res.status(OK_CODE).send(user);
-    }
-  } catch (err) {
-    next(err);
-  }
+const getCurrentUser = (req, res) => {
+  res.status(OK_CODE).send(req.user);
 };
 
 // Создать нового пользователя
@@ -155,10 +169,10 @@ const editUserAvatar = async (req, res, next) => {
 
 module.exports = {
   getUsers,
-  getUser,
+  getUser: findUserByIdDecorator(getUser),
   createUser,
-  editUser,
-  editUserAvatar,
+  editUser: findAuthorizedUserDecorator(editUser),
+  editUserAvatar: findAuthorizedUserDecorator(editUserAvatar),
   login,
-  getCurrentUser,
+  getCurrentUser: findAuthorizedUserDecorator(getCurrentUser),
 };

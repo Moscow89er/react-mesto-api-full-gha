@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const { celebrate, errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
+const errorHandler = require('./middlewares/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const NotFoundError = require('./errors/not-found-err');
 const { loginValidation, createUserValidation } = require('./validation/validationRules');
-const { errorHandler } = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = require('./config/config');
 
@@ -55,6 +55,7 @@ app.use(errorLogger);
 // обработчик ошибок celebrate
 app.use(errors());
 
+// центральный обработчки ошибок
 app.use(errorHandler);
 
 app.listen(PORT, () => {

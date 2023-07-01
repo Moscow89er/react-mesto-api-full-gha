@@ -11,9 +11,8 @@ const NotFoundError = require('./errors/not-found-err');
 const {
   loginValidation,
   createUserValidation,
-} = require('./validation/validation-rules');
-
-const INTERNAL_SERVER_ERROR_CODE = 500;
+} = require('./validation/validationRules');
+const { errorHandler } = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = require('./config/config');
 
@@ -62,22 +61,7 @@ app.use(errorLogger);
 // обработчик ошибок celebrate
 app.use(errors());
 
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
-  const { statusCode = INTERNAL_SERVER_ERROR_CODE, message } = err;
-  // eslint-disable-next-line
-  console.error(err);
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === INTERNAL_SERVER_ERROR_CODE
-        ? 'На сервере произошла ошибка'
-        // eslint-disable-next-line
-        : message
-    });
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line

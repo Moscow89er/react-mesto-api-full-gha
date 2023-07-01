@@ -7,7 +7,7 @@ const {
 const {
   createCardValidation,
   universalCardValidation,
-} = require('../validation/validation-rules');
+} = require('../validation/validationRules');
 
 router.get('/', getCards);
 

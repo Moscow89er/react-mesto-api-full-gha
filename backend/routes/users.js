@@ -8,7 +8,7 @@ const {
   getUserValidation,
   editUserValidation,
   editUserAvatarValidation,
-} = require('../validation/validation-rules');
+} = require('../validation/validationRules');
 
 router.get('/', getUsers);
 

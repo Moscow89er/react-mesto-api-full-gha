@@ -1,17 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, errors } = require('celebrate');
-const {
-  createUser, login,
-} = require('./controllers/users');
+const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
 const NotFoundError = require('./errors/not-found-err');
-const {
-  loginValidation,
-  createUserValidation,
-} = require('./validation/validationRules');
+const { loginValidation, createUserValidation } = require('./validation/validationRules');
 const { errorHandler } = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = require('./config/config');
@@ -46,9 +41,8 @@ app.post('/signup', celebrate(createUserValidation), createUser);
 // авторизация
 app.use(auth);
 
-// роуты которым авторизация нужна
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+// используем централизованный роутер
+app.use('/', require('./routes'));
 
 // роут если страница не существует
 app.use('*', (req, res, next) => {
@@ -61,7 +55,7 @@ app.use(errorLogger);
 // обработчик ошибок celebrate
 app.use(errors());
 
-app.use(errorHandler());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line

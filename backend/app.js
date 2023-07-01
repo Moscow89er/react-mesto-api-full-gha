@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi, errors } = require('celebrate');
+const { celebrate, errors } = require('celebrate');
 const {
   createUser, login,
 } = require('./controllers/users');
@@ -8,9 +8,12 @@ const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
 const NotFoundError = require('./errors/not-found-err');
+const {
+  loginValidation,
+  createUserValidation,
+} = require('./validation/validation-rules');
 
 const INTERNAL_SERVER_ERROR_CODE = 500;
-const urlRegExp = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
 
 const { PORT = 3000 } = require('./config/config');
 
@@ -37,22 +40,9 @@ app.get('/crash-test', () => {
 });
 
 // роуты не требующие авторизации
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-}), login);
+app.post('/signin', celebrate(loginValidation), login);
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(urlRegExp),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).required(),
-  }),
-}), createUser);
+app.post('/signup', celebrate(createUserValidation), createUser);
 
 // авторизация
 app.use(auth);

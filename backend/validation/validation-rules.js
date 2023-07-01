@@ -5,7 +5,7 @@ const urlRegExp = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9(
 const createCardValidation = {
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().uri().required(),
+    link: Joi.string().pattern(urlRegExp).required(),
   }),
 };
 

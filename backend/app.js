@@ -61,7 +61,7 @@ app.use(errorLogger);
 // обработчик ошибок celebrate
 app.use(errors());
 
-app.use(errorHandler);
+app.use(errorHandler());
 
 app.listen(PORT, () => {
   // eslint-disable-next-line

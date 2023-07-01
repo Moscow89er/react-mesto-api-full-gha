@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -12,6 +11,7 @@ const OK_CODE = 200;
 const CREATED_CODE = 201;
 
 // Функция для поиска пользователя и обработки ошибок
+// eslint-disable-next-line consistent-return
 const findUserById = async (id, next) => {
   try {
     const user = await User.findById(id);
@@ -21,6 +21,28 @@ const findUserById = async (id, next) => {
     return user;
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
+      next(new BadRequestError('Переданы некорректные данные'));
+    } else {
+      next(err);
+    }
+  }
+};
+
+// Общая функция для обновления данных пользователя
+const updateUser = async (req, res, next, updateData) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+        upsert: false,
+      },
+    );
+    res.status(OK_CODE).send(user);
+  } catch (err) {
+    if (err instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Переданы некорректные данные'));
     } else {
       next(err);
@@ -44,6 +66,18 @@ const findAuthorizedUserDecorator = (controller) => async (req, res, next) => {
     req.user = user;
     await controller(req, res, next);
   }
+};
+
+// Декоратор для обновления профиля пользователя
+const editUser = (req, res, next) => {
+  const { name, about } = req.body;
+  return updateUser(req, res, next, { name, about });
+};
+
+// Декоратор для обновления аватара пользователя
+const editUserAvatar = (req, res, next) => {
+  const { avatar } = req.body;
+  return updateUser(req, res, next, { avatar });
 };
 
 // Получить всех пользователей
@@ -116,54 +150,6 @@ const login = async (req, res, next) => {
     res.send({ token, userId: user._id });
   } catch (err) {
     next(err);
-  }
-};
-
-// Обновление профиля
-const editUser = async (req, res, next) => {
-  const { name, about } = req.body;
-
-  try {
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, about },
-      {
-        new: true,
-        runValidators: true,
-        upsert: false,
-      },
-    );
-    res.status(OK_CODE).send(user);
-  } catch (err) {
-    if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError('Переданы некорректные данные'));
-    } else {
-      next(err);
-    }
-  }
-};
-
-// Обновленее аватара
-const editUserAvatar = async (req, res, next) => {
-  const { avatar } = req.body;
-
-  try {
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { avatar },
-      {
-        new: true,
-        runValidators: true,
-        upsert: false,
-      },
-    );
-    res.status(OK_CODE).send(user);
-  } catch (err) {
-    if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError('Переданы некорректные данные'));
-    } else {
-      next(err);
-    }
   }
 };
 

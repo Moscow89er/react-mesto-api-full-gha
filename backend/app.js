@@ -7,7 +7,7 @@ const {
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
-const PageNotFoundError = require('./errors/page-not-found-err');
+const NotFoundError = require('./errors/not-found-err');
 
 const INTERNAL_SERVER_ERROR_CODE = 500;
 const urlRegExp = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
@@ -63,7 +63,7 @@ app.use('/cards', require('./routes/cards'));
 
 // роут если страница не существует
 app.use('*', (req, res, next) => {
-  next(new PageNotFoundError('Страница не найдена'));
+  next(new NotFoundError('Страница не найдена'));
 });
 
 // обработчик логгер ошибок

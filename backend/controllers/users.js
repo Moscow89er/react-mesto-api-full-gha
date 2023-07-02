@@ -50,15 +50,6 @@ const updateUser = async (req, res, next, updateData) => {
   }
 };
 
-// Декоратор для поиска пользователя по ID
-const findUserByIdDecorator = (controller) => async (req, res, next) => {
-  const user = await findUserById(req.params.userId, next);
-  if (user) {
-    req.user = user;
-    await controller(req, res, next);
-  }
-};
-
 // Декоратор для поиска авторизованного пользователя
 const findAuthorizedUserDecorator = (controller) => async (req, res, next) => {
   const user = await findUserById(req.user._id, next);
@@ -90,13 +81,8 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-// Получить пользователя по id
-const getUser = (req, res) => {
-  res.status(OK_CODE).send(req.user);
-};
-
-// Получить информацию о текущем пользователе
-const getCurrentUser = (req, res) => {
+// Получить данные пользователя
+const getUserData = (req, res) => {
   res.status(OK_CODE).send(req.user);
 };
 
@@ -155,10 +141,10 @@ const login = async (req, res, next) => {
 
 module.exports = {
   getUsers,
-  getUser: findUserByIdDecorator(getUser),
+  getUser: findAuthorizedUserDecorator(getUserData),
   createUser,
   editUser: findAuthorizedUserDecorator(editUser),
   editUserAvatar: findAuthorizedUserDecorator(editUserAvatar),
   login,
-  getCurrentUser: findAuthorizedUserDecorator(getCurrentUser),
+  getCurrentUser: findAuthorizedUserDecorator(getUserData),
 };

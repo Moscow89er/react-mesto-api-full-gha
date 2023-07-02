@@ -12,11 +12,11 @@ const CREATED_CODE = 201;
 
 // Функция для поиска пользователя и обработки ошибок
 // eslint-disable-next-line consistent-return
-const findUserById = async (id, next) => {
+const findUserById = async (id, res, next) => {
   try {
     const user = await User.findById(id);
     if (!user) {
-      throw new NotFoundError('Запрашиваемый пользоветель не найден');
+      next(new NotFoundError('Запрашиваемый пользоветель не найден'));
     }
     return user;
   } catch (err) {

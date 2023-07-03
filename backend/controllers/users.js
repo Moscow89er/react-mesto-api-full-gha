@@ -28,6 +28,9 @@ const findUserById = async (id, next) => {
   }
 };
 
+// Функция-обертка, возвращающая функцию поиска пользователя
+const getUserFinder = () => findUserById;
+
 // Общая функция для обновления данных пользователя
 const updateUser = async (req, res, next, updateData) => {
   try {
@@ -47,15 +50,6 @@ const updateUser = async (req, res, next, updateData) => {
     } else {
       next(err);
     }
-  }
-};
-
-// Декоратор для поиска авторизованного пользователя
-const findAuthorizedUserDecorator = (controller) => async (req, res, next) => {
-  const user = await findUserById(req.user._id, next);
-  if (user) {
-    req.user = user;
-    await controller(req, res, next);
   }
 };
 
@@ -81,9 +75,18 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-// Получить данные пользователя
-const getUserData = (req, res) => {
-  res.status(OK_CODE).send(req.user);
+// Получить пользователя по id
+const getUser = async (req, res) => {
+  const findUser = getUserFinder();
+  const user = await findUser(req.params.userId);
+  res.status(OK_CODE).send(user);
+};
+
+// Получить информацию о текущем пользователе
+const getCurrentUser = async (req, res) => {
+  const findUser = getUserFinder();
+  const user = await findUser(req.user._id);
+  res.status(OK_CODE).send(user);
 };
 
 // Создать нового пользователя
@@ -141,10 +144,10 @@ const login = async (req, res, next) => {
 
 module.exports = {
   getUsers,
-  getUser: findAuthorizedUserDecorator(getUserData),
+  getUser,
   createUser,
-  editUser: findAuthorizedUserDecorator(editUser),
-  editUserAvatar: findAuthorizedUserDecorator(editUserAvatar),
+  editUser,
+  editUserAvatar,
   login,
-  getCurrentUser: findAuthorizedUserDecorator(getUserData),
+  getCurrentUser,
 };

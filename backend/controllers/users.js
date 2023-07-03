@@ -16,11 +16,10 @@ const findUserById = async (id, next) => {
   try {
     const user = await User.findById(id);
     if (!user) {
-      return next(new NotFoundError('Запрашиваемый пользоветель не найден'));
+      next(new NotFoundError('Запрашиваемый пользоветель не найден'));
     }
     return user;
   } catch (err) {
-    console.error(err);
     if (err instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Переданы некорректные данные'));
     } else {

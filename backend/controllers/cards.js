@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 const BadRequestError = require('../errors/bad-request-err');
@@ -6,58 +7,6 @@ const NotFoundError = require('../errors/not-found-err');
 
 const OK_CODE = 200;
 const CREATED_CODE = 201;
-
-// функция для поиска карточки и обработки ошибок
-// eslint-disable-next-line consistent-return
-const findCardById = async (id, next) => {
-  try {
-    const card = await Card.findById(id);
-    if (!card) {
-      throw new NotFoundError('Запрашиваемая карточка не найдена');
-    }
-    return card;
-  } catch (err) {
-    if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Переданы некорректные данные'));
-    } else {
-      next(err);
-    }
-  }
-};
-
-// декоратор для поиска карточки по Id
-const findCardByIdDecorator = (controller) => async (req, res, next) => {
-  const card = await findCardById(req.params.cardId, next);
-  if (card) {
-    req.card = card;
-    await controller(req, res, next);
-  }
-};
-
-// декоратор для проверки принадлежности карточки к пользователю
-const checkCardOwnershipDecorator = (controller) => async (req, res, next) => {
-  const { card, user } = req;
-  if (card.owner.toString() !== user._id) {
-    next(new ForbiddenError('Недостаточно прав для выполнения операции'));
-  } else {
-    await controller(req, res, next);
-  }
-};
-
-// декоратор для обновления лайков
-const updateCardLikesDecorator = (updateOperation) => async (req, res, next) => {
-  const { card } = req;
-  try {
-    const updatedCard = await Card.findByIdAndUpdate(
-      card._id,
-      updateOperation({ userId: req.user._id }),
-      { new: true },
-    );
-    res.status(OK_CODE).send(updatedCard);
-  } catch (err) {
-    next(err);
-  }
-};
 
 // Получить все карточки
 const getCards = async (req, res, next) => {
@@ -88,25 +37,61 @@ const createCard = async (req, res, next) => {
 
 // Удалить карточку
 const deleteCard = async (req, res, next) => {
-  const { card } = req;
+  const { cardId } = req.params;
+  const owner = req.user._id;
+
   try {
-    await Card.deleteOne({ _id: card._id });
-    res.status(OK_CODE).send(card);
+    const card = await Card.findById(cardId);
+    if (!card) {
+      throw new NotFoundError('Запрашиваемая карточка не найдена');
+    } else if (card.owner.toString() !== owner) {
+      // если пользователь не является владельцем текущей карточки
+      next(new ForbiddenError('Недостаточно прав для удаления'));
+    } else {
+      await Card.deleteOne({ _id: cardId });
+      res.status(OK_CODE).send(card);
+    }
   } catch (err) {
-    next(err);
+    if (err instanceof mongoose.Error.CastError) {
+      next(new BadRequestError('Переданы некорректные данные'));
+    } else {
+      next(err);
+    }
+  }
+};
+
+// общая функция для обновления лайков и дизлайков карточки
+const updateCardLikes = async (req, res, next, updateOperation) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      updateOperation,
+      { new: true },
+    );
+    if (!card) {
+      throw new NotFoundError('Запрашиваемая карточка не найдена');
+    } else {
+      res.status(OK_CODE).send(card);
+    }
+  } catch (err) {
+    if (err instanceof mongoose.Error.CastError) {
+      next(new BadRequestError('Переданы некорректные данные'));
+    } else {
+      next(err);
+    }
   }
 };
 
 // Поставить лайк карточке
-const likeCard = updateCardLikesDecorator(({ userId }) => ({ $addToSet: { likes: userId } }));
+const likeCard = async (req, res, next) => updateCardLikes(req, res, next, { $addToSet: { likes: req.user._id } });
 
 // Дислайк карточки
-const dislikeCard = updateCardLikesDecorator(({ userId }) => ({ $pull: { likes: userId } }));
+const dislikeCard = async (req, res, next) => updateCardLikes(req, res, next, { $pull: { likes: req.user._id } });
 
 module.exports = {
   getCards,
   createCard,
-  deleteCard: findCardByIdDecorator(checkCardOwnershipDecorator(deleteCard)),
-  likeCard: findCardByIdDecorator(likeCard),
-  dislikeCard: findCardByIdDecorator(dislikeCard),
+  deleteCard,
+  likeCard,
+  dislikeCard,
 };

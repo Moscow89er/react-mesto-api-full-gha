@@ -16,10 +16,11 @@ const findUserById = async (id, next) => {
   try {
     const user = await User.findById(id);
     if (!user) {
-      throw new NotFoundError('Запрашиваемый пользоветель не найден');
+      return next(new NotFoundError('Запрашиваемый пользоветель не найден'));
     }
     return user;
   } catch (err) {
+    console.error(err);
     if (err instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Переданы некорректные данные'));
     } else {
@@ -79,7 +80,7 @@ const getUsers = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const findUser = getUserFinder();
-    const user = await findUser(req.params.userId);
+    const user = await findUser(req.params.userId, next);
     res.status(OK_CODE).send(user);
   } catch (err) {
     next(err);
@@ -90,7 +91,7 @@ const getUser = async (req, res, next) => {
 const getCurrentUser = async (req, res, next) => {
   try {
     const findUser = getUserFinder();
-    const user = await findUser(req.user._id);
+    const user = await findUser(req.user._id, next);
     res.status(OK_CODE).send(user);
   } catch (err) {
     next(err);

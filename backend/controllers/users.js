@@ -76,17 +76,25 @@ const getUsers = async (req, res, next) => {
 };
 
 // Получить пользователя по id
-const getUser = async (req, res) => {
-  const findUser = getUserFinder();
-  const user = await findUser(req.params.userId);
-  res.status(OK_CODE).send(user);
+const getUser = async (req, res, next) => {
+  try {
+    const findUser = getUserFinder();
+    const user = await findUser(req.params.userId);
+    res.status(OK_CODE).send(user);
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Получить информацию о текущем пользователе
-const getCurrentUser = async (req, res) => {
-  const findUser = getUserFinder();
-  const user = await findUser(req.user._id);
-  res.status(OK_CODE).send(user);
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const findUser = getUserFinder();
+    const user = await findUser(req.user._id);
+    res.status(OK_CODE).send(user);
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Создать нового пользователя

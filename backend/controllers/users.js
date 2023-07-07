@@ -16,7 +16,7 @@ const findUserById = async (id, next) => {
   try {
     const user = await User.findById(id);
     if (!user) {
-      next(new NotFoundError('Запрашиваемый пользоветель не найден'));
+      throw new NotFoundError('Запрашиваемый пользоветель не найден');
     }
     return user;
   } catch (err) {
